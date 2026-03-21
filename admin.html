@@ -1,0 +1,791 @@
+<!-- Anatech Portfolio — ADMIN DASHBOARD -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080b12;--bg2:#0d1220;--bg3:#111827;--surface:#161d2e;
+  --border:#1e2a3d;--border2:#2a3a55;--text:#e8edf5;--text2:#8a9bb5;
+  --text3:#4a5a72;--accent:#4f8ef7;--accent2:#7c6af0;--gold:#c9a84c;
+  --gold2:#e8c96a;--red:#e05555;--green:#4ade80;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* PASSWORD OVERLAY */
+.pw-ov{position:fixed;inset:0;z-index:900;background:rgba(8,11,18,.97);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(20px);transition:opacity .35s}
+.pw-ov.hidden{opacity:0;pointer-events:none}
+.pw-box{width:min(90vw,420px);background:var(--surface);border:1px solid var(--border2);padding:3rem;position:relative;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px))}
+.pw-icon{font-size:2.5rem;margin-bottom:1.5rem;text-align:center;display:block}
+.pw-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;text-align:center;margin-bottom:.4rem}
+.pw-sub{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);text-align:center;margin-bottom:2.5rem}
+.pw-inw{position:relative;margin-bottom:1rem}
+.pw-in{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:1rem 3rem 1rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:1.1rem;letter-spacing:.2em;outline:none;transition:border-color .2s;text-align:center}
+.pw-in:focus{border-color:var(--accent)}
+.pw-eye{position:absolute;right:.8rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:1.1rem;padding:.2rem;transition:color .2s}
+.pw-eye:hover{color:var(--text)}
+.pw-btn{width:100%;background:var(--accent);color:var(--bg);border:none;padding:1rem;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:all .25s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+.pw-btn:hover{background:var(--accent2)}
+.pw-err{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--red);text-align:center;margin-top:.8rem;min-height:1.2em}
+.pw-back{display:block;margin-top:1.5rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);text-decoration:none;transition:color .2s}
+.pw-back:hover{color:var(--accent)}
+.pw-hint{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;color:var(--text3);text-align:center;margin-top:1rem}
+
+/* ADMIN LAYOUT */
+.ap{display:none;flex-direction:column;height:100vh;overflow:hidden}
+.ap.open{display:flex}
+.ap-top{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:var(--surface);border-bottom:1px solid var(--border2);flex-shrink:0}
+.ap-brand{display:flex;align-items:center;gap:.8rem}
+.ap-badge{background:var(--accent);color:var(--bg);font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;padding:.25rem .6rem;border-radius:2px;font-weight:600}
+.ap-brand-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;font-style:italic;color:var(--text)}
+.ap-top-actions{display:flex;align-items:center;gap:1rem}
+.ap-saved{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:.4rem;opacity:0;transition:opacity .3s}
+.ap-saved.show{opacity:1}
+.ap-saved-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.ap-view{display:flex;align-items:center;gap:.5rem;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);color:var(--accent);padding:.5rem 1.2rem;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s}
+.ap-view:hover{background:rgba(79,142,247,.2)}
+.ap-exit{display:flex;align-items:center;gap:.5rem;background:rgba(224,85,85,.1);border:1px solid rgba(224,85,85,.25);color:var(--red);padding:.5rem 1.2rem;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.ap-exit:hover{background:rgba(224,85,85,.2)}
+.ap-body{display:flex;flex:1;overflow:hidden}
+.ap-side{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:1.5rem 0;overflow-y:auto}
+.side-lbl{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:0 1.5rem;margin-bottom:.5rem}
+.side-btn{display:flex;align-items:center;gap:.8rem;width:100%;background:none;border:none;text-align:left;padding:.75rem 1.5rem;cursor:pointer;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:500;color:var(--text2);transition:all .2s;border-left:2px solid transparent}
+.side-btn:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.side-btn.active{color:var(--accent);background:rgba(79,142,247,.07);border-left-color:var(--accent)}
+.side-div{height:1px;background:var(--border);margin:1rem 1.5rem}
+.ap-cont{flex:1;overflow-y:auto;padding:2.5rem}
+.aps{display:none}
+.aps.active{display:block}
+.aph{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;color:var(--text);margin-bottom:.3rem}
+.apd{font-size:.85rem;color:var(--text3);margin-bottom:2rem}
+.apc{background:var(--surface);border:1px solid var(--border);padding:2rem;margin-bottom:1.5rem}
+.apct{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1.2rem}
+.apg2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.apg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.fg2{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.8rem}
+.fl2{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.fi2,.ft2{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;font-family:'Syne',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;resize:none;width:100%}
+.fi2:focus,.ft2:focus{border-color:var(--accent)}
+.fi2::placeholder,.ft2::placeholder{color:var(--text3)}
+.ft2{min-height:100px}
+.ap-save{background:var(--accent);color:var(--bg);border:none;padding:.7rem 2rem;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)}
+.ap-save:hover{background:var(--accent2)}
+.upz{border:2px dashed var(--border2);padding:2rem;text-align:center;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:.6rem}
+.upz:hover{border-color:var(--accent);background:rgba(79,142,247,.04)}
+.upz-ico{font-size:1.8rem;opacity:.5}
+.upz-txt{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
+.pprev-wrap{position:relative;display:inline-block;margin-top:.8rem}
+.pprev{width:120px;height:150px;object-fit:cover;border:1px solid var(--border2);display:block}
+.pprev-del{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border:none;width:20px;height:20px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.apj-list{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.5rem}
+.apj-item{display:flex;align-items:center;gap:1rem;background:var(--bg3);border:1px solid var(--border);padding:.8rem 1rem}
+.apj-thumb{width:60px;height:42px;background:var(--border);flex-shrink:0;overflow:hidden}
+.apj-thumb img{width:100%;height:100%;object-fit:cover}
+.apj-info{flex:1}
+.apj-title{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.2rem}
+.apj-tag{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;color:var(--text3);text-transform:uppercase}
+.apj-del{background:none;border:1px solid rgba(224,85,85,.2);color:var(--red);padding:.35rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;flex-shrink:0}
+.apj-del:hover{background:rgba(224,85,85,.1)}
+.agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.2rem}
+.agi{aspect-ratio:1;overflow:hidden;position:relative;background:var(--bg3);border:1px solid var(--border)}
+.agi img{width:100%;height:100%;object-fit:cover}
+.agi-del{position:absolute;top:4px;right:4px;background:var(--red);color:#fff;border:none;width:22px;height:22px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.agi:hover .agi-del{opacity:1}
+.no-items{color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.08em}
+
+/* TOAST */
+.toast{position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:.8rem 1.8rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.08em;z-index:999;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.toast.show{opacity:1}
+
+@media(max-width:960px){
+  .ap-side{width:180px}
+  .apg2,.apg3{grid-template-columns:1fr}
+  .agrid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div class="pw-ov" id="pw-ov">
+  <div class="pw-box">
+    <span class="pw-icon">🔐</span>
+    <div class="pw-title">Admin Access</div>
+    <div class="pw-sub">Enter your password to continue</div>
+    <div class="pw-inw">
+      <input class="pw-in" type="password" id="pw-in" placeholder="••••••" maxlength="30" onkeydown="if(event.key==='Enter')checkPW()">
+      <button class="pw-eye" onclick="toggleEye()">👁</button>
+    </div>
+    <button class="pw-btn" onclick="checkPW()">Unlock Dashboard →</button>
+    <div class="pw-err" id="pw-err"></div>
+    <div class="pw-hint">Default: 9870</div>
+    <a class="pw-back" href="index.html">← Back to Portfolio</a>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="ap" id="ap">
+  <div class="ap-top">
+    <div class="ap-brand">
+      <span class="ap-badge">ADMIN</span>
+      <span class="ap-brand-name">Portfolio Dashboard</span>
+    </div>
+    <div class="ap-top-actions">
+      <div class="ap-saved" id="ap-saved"><div class="ap-saved-dot"></div> Saved</div>
+      <a class="ap-view" href="index.html" target="_blank">↗ View Portfolio</a>
+      <button class="ap-exit" onclick="lockAdmin()">🔒 Lock</button>
+    </div>
+  </div>
+  <div class="ap-body">
+    <div class="ap-side">
+      <div class="side-lbl" style="margin-top:.5rem">🔄 Sync</div>
+      <button class="side-btn active" onclick="showSec('syncsetup',this)">⚡ Sync Setup</button>
+      <div class="side-div"></div>
+      <div class="side-lbl">Profile</div>
+      <button class="side-btn" onclick="showSec('identity',this)">👤 Identity</button>
+      <button class="side-btn" onclick="showSec('photo',this)">🖼 Profile Photo</button>
+      <button class="side-btn" onclick="showSec('bio',this)">📝 Bio &amp; Skills</button>
+      <button class="side-btn" onclick="showSec('stats',this)">📊 Stats</button>
+      <div class="side-div"></div>
+      <div class="side-lbl">Content</div>
+      <button class="side-btn" onclick="showSec('projects',this)">💼 Projects</button>
+      <button class="side-btn" onclick="showSec('gallery',this)">📷 Gallery</button>
+      <div class="side-div"></div>
+      <div class="side-lbl">Settings</div>
+      <button class="side-btn" onclick="showSec('contact',this)">📬 Contact Info</button>
+      <button class="side-btn" onclick="showSec('socials',this)">🔗 Socials</button>
+      <button class="side-btn" onclick="showSec('changepw',this)">🔑 Change Password</button>
+    </div>
+    <div class="ap-cont">
+
+      <!-- SYNC SETUP -->
+      <div class="aps active" id="sec-syncsetup">
+        <div class="aph">🔄 Sync Setup</div>
+        <div class="apd">Connect GitHub Gist so your portfolio loads on every device — phones, incognito, any browser. Free, takes 2 minutes.</div>
+        <div class="apc">
+          <div class="apct">// Status</div>
+          <div id="sync-status" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.08em;margin-bottom:1.5rem;padding:.8rem;background:var(--bg3);border:1px solid var(--border)">
+            <span style="color:var(--text3)">● Checking…</span>
+          </div>
+          <div class="apct">// How to get your free GitHub Token (2 minutes)</div>
+          <ol style="font-size:.82rem;line-height:2.2;color:var(--text2);padding-left:1.4rem;margin-bottom:1.5rem">
+            <li>Go to <strong style="color:var(--accent)">github.com</strong> → sign in (or sign up free)</li>
+            <li>Click your profile picture → <strong>Settings</strong></li>
+            <li>Scroll to the bottom → click <strong>Developer settings</strong></li>
+            <li>Click <strong>Personal access tokens</strong> → <strong>Tokens (classic)</strong></li>
+            <li>Click <strong style="color:var(--gold)">Generate new token (classic)</strong></li>
+            <li>Give it a name like <em>portfolio</em>, set expiration to <strong>No expiration</strong></li>
+            <li>Tick only the <strong style="color:var(--gold)">gist</strong> checkbox</li>
+            <li>Click <strong>Generate token</strong> → copy the token shown</li>
+            <li>Paste it below and click <strong>Connect &amp; Sync</strong></li>
+          </ol>
+          <div class="fg2">
+            <label class="fl2">GitHub Personal Access Token</label>
+            <input class="fi2" id="i-gist-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          </div>
+          <div class="fg2" style="display:none">
+            <label class="fl2">Gist ID (auto-filled after first sync)</label>
+            <input class="fi2" id="i-gist-id" placeholder="auto">
+          </div>
+          <button class="ap-save" onclick="saveSyncConfig()">Connect &amp; Sync →</button>
+          <div id="sync-test-result" style="margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.08em;line-height:1.6;min-height:1.2em"></div>
+          <div style="margin-top:1.5rem;padding:1rem;background:var(--bg3);border:1px solid var(--border);font-size:.82rem;line-height:1.8;color:var(--text2)">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem">// How it works</div>
+            Your portfolio data is saved to a <strong style="color:var(--text)">private GitHub Gist</strong>. Every time someone opens your portfolio it fetches that file automatically.<br><br>
+            Images are hosted on <strong style="color:var(--text)">Cloudinary</strong> (already configured). The token is stored only in your browser — never shared.
+          </div>
+        </div>
+      </div>
+
+      <!-- IDENTITY -->
+      <div class="aps" id="sec-identity">
+        <div class="aph">Identity</div>
+        <div class="apd">Your name, headline, and hero text.</div>
+        <div class="apc">
+          <div class="apct">// Hero Section</div>
+          <div class="apg2">
+            <div class="fg2"><label class="fl2">Full Name</label><input class="fi2" id="i-name" placeholder="e.g. Jean Mutoni"></div>
+            <div class="fg2"><label class="fl2">Status Badge</label><input class="fi2" id="i-badge" placeholder="Available for hire"></div>
+          </div>
+          <div class="fg2"><label class="fl2">Role / Sub-title</label><input class="fi2" id="i-sub" placeholder="Full-Stack Developer &amp; Designer"></div>
+          <div class="fg2"><label class="fl2">Hero Description (1–2 sentences)</label><textarea class="ft2" id="i-desc" placeholder="A short compelling intro shown to every visitor."></textarea></div>
+          <div class="apg2">
+            <div class="fg2"><label class="fl2">Browser Tab Title</label><input class="fi2" id="i-ptitle" placeholder="Jean Mutoni · Portfolio"></div>
+            <div class="fg2"><label class="fl2">Footer Text</label><input class="fi2" id="i-footer" placeholder="© 2025 · Jean Mutoni"></div>
+          </div>
+          <button class="ap-save" onclick="saveIdentity()">Save Identity</button>
+        </div>
+      </div>
+
+      <!-- PHOTO -->
+      <div class="aps" id="sec-photo">
+        <div class="aph">Profile Photo</div>
+        <div class="apd">Upload the photo shown in the hero section.</div>
+        <div class="apc">
+          <div class="apct">// Upload Photo</div>
+          <div class="upz" onclick="document.getElementById('ph-up').click()">
+            <div class="upz-ico">📷</div>
+            <div class="upz-txt">Click to upload · JPG, PNG, WEBP</div>
+            <input type="file" id="ph-up" accept="image/*" style="display:none" onchange="handlePhotoUp(event)">
+          </div>
+          <div id="ph-prog" style="display:none;margin-top:1rem"></div>
+          <div id="ph-prev"></div>
+        </div>
+      </div>
+
+      <!-- BIO -->
+      <div class="aps" id="sec-bio">
+        <div class="aph">Bio &amp; Skills</div>
+        <div class="apd">About section text and animated skill bars.</div>
+        <div class="apc">
+          <div class="apct">// About Bio (HTML supported)</div>
+          <div class="fg2"><textarea class="ft2" id="i-bio" style="min-height:140px" placeholder="<p>Hello! I'm a <strong>creative developer</strong>...</p>&#10;<p>Second paragraph here...</p>"></textarea></div>
+          <button class="ap-save" onclick="saveBio()">Save Bio</button>
+        </div>
+        <div class="apc">
+          <div class="apct">// Skills — one per line: Skill Name, 85</div>
+          <div class="fg2"><textarea class="ft2" id="i-skills" style="min-height:130px" placeholder="JavaScript, 90&#10;UI Design, 80&#10;Photography, 75&#10;Branding, 70"></textarea></div>
+          <button class="ap-save" onclick="saveSkills()">Save Skills</button>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="aps" id="sec-stats">
+        <div class="aph">Stats</div>
+        <div class="apd">Numbers displayed under your name in the hero.</div>
+        <div class="apc">
+          <div class="apct">// Hero Numbers</div>
+          <div class="apg3">
+            <div class="fg2"><label class="fl2">Years Experience</label><input class="fi2" id="i-yr" placeholder="5+"></div>
+            <div class="fg2"><label class="fl2">Projects Done</label><input class="fi2" id="i-pj" placeholder="40+"></div>
+            <div class="fg2"><label class="fl2">Happy Clients</label><input class="fi2" id="i-cl" placeholder="20+"></div>
+          </div>
+          <button class="ap-save" onclick="saveStats()">Save Stats</button>
+        </div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="aps" id="sec-projects">
+        <div class="aph">Projects</div>
+        <div class="apd">Add and manage your work showcased to visitors.</div>
+        <div class="apc">
+          <div class="apct">// Existing Projects</div>
+          <div class="apj-list" id="apj-list"><div class="no-items">No projects yet.</div></div>
+        </div>
+        <div class="apc">
+          <div class="apct">// Add New Project</div>
+          <div class="apg2">
+            <div class="fg2"><label class="fl2">Title *</label><input class="fi2" id="p-ti" placeholder="My Project"></div>
+            <div class="fg2"><label class="fl2">Category Tag</label><input class="fi2" id="p-tg" placeholder="Web Design"></div>
+          </div>
+          <div class="fg2"><label class="fl2">Description</label><textarea class="ft2" id="p-de" placeholder="Brief project description…"></textarea></div>
+          <div class="fg2"><label class="fl2">Technologies (comma-separated)</label><input class="fi2" id="p-tc" placeholder="React, Figma, Node.js"></div>
+          <div class="fg2"><label class="fl2">Live URL</label><input class="fi2" id="p-ur" placeholder="https://example.com"></div>
+          <div class="fg2">
+            <label class="fl2">Cover Image</label>
+            <div class="upz" onclick="document.getElementById('p-img-up').click()">
+              <div class="upz-ico">🖼</div>
+              <div class="upz-txt" id="p-img-lbl">Click to upload image</div>
+              <input type="file" id="p-img-up" accept="image/*" style="display:none" onchange="handleProjImg(event)">
+            </div>
+          </div>
+          <button class="ap-save" onclick="addProject()">Add Project →</button>
+        </div>
+      </div>
+
+      <!-- GALLERY -->
+      <div class="aps" id="sec-gallery">
+        <div class="aph">Gallery</div>
+        <div class="apd">Upload photos for your public gallery section.</div>
+        <div class="apc">
+          <div class="apct">// Gallery Photos</div>
+          <div class="agrid" id="agrid"><div class="no-items" style="grid-column:span 4">No photos yet.</div></div>
+          <div id="gal-prog" style="display:none;margin-bottom:1rem"></div>
+          <div class="upz" onclick="document.getElementById('gal-up').click()">
+            <div class="upz-ico">📷</div>
+            <div class="upz-txt">Upload photos · select multiple</div>
+            <input type="file" id="gal-up" accept="image/*" multiple style="display:none" onchange="handleGalUp(event)">
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="aps" id="sec-contact">
+        <div class="aph">Contact Info</div>
+        <div class="apd">Displayed publicly in your contact section.</div>
+        <div class="apc">
+          <div class="apct">// Contact Details</div>
+          <div class="apg2">
+            <div class="fg2"><label class="fl2">Email</label><input class="fi2" id="c-em" placeholder="you@email.com"></div>
+            <div class="fg2"><label class="fl2">Phone</label><input class="fi2" id="c-ph" placeholder="+250 700 000 000"></div>
+            <div class="fg2"><label class="fl2">Location</label><input class="fi2" id="c-lo" placeholder="Kigali, Rwanda"></div>
+            <div class="fg2"><label class="fl2">Availability</label><input class="fi2" id="c-av" placeholder="Available for freelance"></div>
+          </div>
+          <button class="ap-save" onclick="saveContact()">Save Contact</button>
+        </div>
+      </div>
+
+      <!-- SOCIALS -->
+      <div class="aps" id="sec-socials">
+        <div class="aph">Social Links</div>
+        <div class="apd">Your professional social media profiles.</div>
+        <div class="apc">
+          <div class="apct">// Links</div>
+          <div class="fg2"><label class="fl2">GitHub URL</label><input class="fi2" id="s-gh2" placeholder="https://github.com/you"></div>
+          <div class="fg2"><label class="fl2">LinkedIn URL</label><input class="fi2" id="s-li2" placeholder="https://linkedin.com/in/you"></div>
+          <div class="fg2"><label class="fl2">Twitter / X URL</label><input class="fi2" id="s-tw2" placeholder="https://twitter.com/you"></div>
+          <button class="ap-save" onclick="saveSocials()">Save Socials</button>
+        </div>
+      </div>
+
+      <!-- CHANGE PASSWORD -->
+      <div class="aps" id="sec-changepw">
+        <div class="aph">Change Password</div>
+        <div class="apd">Update your admin access password.</div>
+        <div class="apc">
+          <div class="apct">// New Password</div>
+          <div class="fg2"><label class="fl2">Current Password</label><input class="fi2" type="password" id="pw-cur" placeholder="Enter current password"></div>
+          <div class="fg2"><label class="fl2">New Password</label><input class="fi2" type="password" id="pw-nw" placeholder="Enter new password"></div>
+          <div class="fg2"><label class="fl2">Confirm New Password</label><input class="fi2" type="password" id="pw-cf" placeholder="Re-enter new password"></div>
+          <button class="ap-save" onclick="changePW()">Update Password</button>
+          <div id="pw-msg" style="margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.08em;min-height:1.4em"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  ADMIN DASHBOARD — admin.html
+//  Password-protected. Read + Write. Syncs to GitHub Gist.
+// ═══════════════════════════════════════════════════════════
+
+const CLOUD = { cloudName: 'dh4t0i5ns', uploadPreset: 'portfolio_unsigned' };
+const BAKED_GIST_ID = 'a4886d55798e9fcf03d21a81d47aed6d';
+
+let GIST = { token: '', gistId: BAKED_GIST_ID };
+
+function cloudReady() { return !!(CLOUD.cloudName && CLOUD.uploadPreset); }
+function canWrite()   { return !!(GIST.token); }
+function canRead()    { return !!(GIST.gistId); }
+
+// Default state (passwords stored separately in localStorage)
+let S = {
+  name: '', badge: '', sub: '', desc: '', ptitle: '', footer: '',
+  bio: '', skills: [], yr: '', pj: '', cl: '', photo: null,
+  projects: [], gallery: [],
+  em: '', ph: '', lo: '', av: '', gh: '', li: '', tw: ''
+};
+let adminPW = '9870';  // stored separately from public data
+let tmpPImg = null;
+
+// ── GIST SAVE ──
+async function gistSave() {
+  if (!canWrite()) return 'No GitHub token — open Sync Setup';
+  const content = JSON.stringify(S, null, 2);
+  try {
+    const isNew = !GIST.gistId;
+    const url    = isNew ? 'https://api.github.com/gists' : `https://api.github.com/gists/${GIST.gistId}`;
+    const method = isNew ? 'POST' : 'PATCH';
+    const body   = isNew
+      ? { description: 'Portfolio Data', public: true, files: { 'portfolio.json': { content } } }
+      : { files: { 'portfolio.json': { content } } };
+    const res  = await fetch(url, {
+      method,
+      headers: { 'Authorization': `token ${GIST.token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) return data.message || ('GitHub error ' + res.status);
+    GIST.gistId = data.id;
+    try { localStorage.setItem('pf_gist', JSON.stringify(GIST)); } catch (e) {}
+    return true;
+  } catch (e) { return e.message || 'Network error'; }
+}
+
+// ── GIST LOAD ──
+async function gistLoad() {
+  if (!canRead()) return null;
+  try {
+    const rawUrl = `https://gist.githubusercontent.com/raw/${GIST.gistId}/portfolio.json?t=${Date.now()}`;
+    const res = await fetch(rawUrl, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+    const res2 = await fetch(`https://api.github.com/gists/${GIST.gistId}`, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!res2.ok) return null;
+    const d = await res2.json();
+    const f = d.files['portfolio.json'];
+    if (!f) return null;
+    return JSON.parse(f.truncated ? await (await fetch(f.raw_url)).text() : f.content);
+  } catch (e) { console.warn('gistLoad:', e.message); return null; }
+}
+
+function flashSaved() {
+  const e = document.getElementById('ap-saved');
+  e.classList.add('show');
+  setTimeout(() => e.classList.remove('show'), 2500);
+}
+
+async function save() {
+  // Save public data
+  try { localStorage.setItem('pf4', JSON.stringify(S)); } catch (e) {}
+  // Save password separately
+  try { localStorage.setItem('pf_pw', adminPW); } catch (e) {}
+  flashSaved();
+  if (canWrite()) {
+    const r = await gistSave();
+    if (r !== true) toast('⚠ Sync: ' + r);
+  }
+}
+
+function loadGistConfig() {
+  if (BAKED_GIST_ID) GIST.gistId = BAKED_GIST_ID;
+  try {
+    const d = localStorage.getItem('pf_gist');
+    if (d) {
+      const c = JSON.parse(d);
+      if (c.token)  GIST.token  = c.token;
+      if (c.gistId) GIST.gistId = c.gistId;
+    }
+  } catch (e) {}
+}
+
+async function loadData() {
+  loadGistConfig();
+  // Load password
+  try { const pw = localStorage.getItem('pf_pw'); if (pw) adminPW = pw; } catch (e) {}
+  // Load public data from localStorage
+  try {
+    const local = localStorage.getItem('pf4');
+    if (local) S = { ...S, ...JSON.parse(local) };
+  } catch (e) {}
+  // Load from Gist (fresher)
+  if (canRead()) {
+    const remote = await gistLoad();
+    if (remote) {
+      S = { ...S, ...remote };
+      try { localStorage.setItem('pf4', JSON.stringify(S)); } catch (e) {}
+    }
+  }
+}
+
+// ── CLOUDINARY ──
+async function uploadToCloud(file) {
+  if (!cloudReady()) { toast('Cloudinary not configured'); return null; }
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUD.uploadPreset);
+  fd.append('folder', 'portfolio');
+  try {
+    const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD.cloudName}/image/upload`, { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.secure_url;
+  } catch (err) { toast('Image upload failed: ' + err.message); return null; }
+}
+
+// ── PASSWORD ──
+function toggleEye() {
+  const i = document.getElementById('pw-in');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+
+function checkPW() {
+  const v = document.getElementById('pw-in').value;
+  if (v === adminPW) {
+    document.getElementById('pw-ov').classList.add('hidden');
+    openAdmin();
+  } else {
+    const e = document.getElementById('pw-err');
+    const i = document.getElementById('pw-in');
+    e.textContent = '✕ Incorrect password';
+    i.style.borderColor = 'var(--red)';
+    setTimeout(() => { i.style.borderColor = ''; e.textContent = ''; }, 2000);
+  }
+}
+
+function lockAdmin() {
+  document.getElementById('ap').classList.remove('open');
+  document.getElementById('pw-ov').classList.remove('hidden');
+  document.getElementById('pw-in').value = '';
+}
+
+// ── ADMIN OPEN ──
+function openAdmin() {
+  document.getElementById('i-name').value    = S.name    || '';
+  document.getElementById('i-badge').value   = S.badge   || '';
+  document.getElementById('i-sub').value     = S.sub     || '';
+  document.getElementById('i-desc').value    = S.desc    || '';
+  document.getElementById('i-ptitle').value  = S.ptitle  || '';
+  document.getElementById('i-footer').value  = S.footer  || '';
+  document.getElementById('i-bio').value     = S.bio     || '';
+  document.getElementById('i-skills').value  = (S.skills || []).map(s => `${s.n}, ${s.l}`).join('\n');
+  document.getElementById('i-yr').value      = S.yr      || '';
+  document.getElementById('i-pj').value      = S.pj      || '';
+  document.getElementById('i-cl').value      = S.cl      || '';
+  document.getElementById('c-em').value      = S.em      || '';
+  document.getElementById('c-ph').value      = S.ph      || '';
+  document.getElementById('c-lo').value      = S.lo      || '';
+  document.getElementById('c-av').value      = S.av      || '';
+  document.getElementById('s-gh2').value     = S.gh      || '';
+  document.getElementById('s-li2').value     = S.li      || '';
+  document.getElementById('s-tw2').value     = S.tw      || '';
+  document.getElementById('i-gist-token').value = GIST.token  || '';
+  document.getElementById('i-gist-id').value    = GIST.gistId || '';
+  renderPhotoAdmin();
+  renderAdminProjs();
+  renderAdminGal();
+  updateSyncStatus();
+  document.getElementById('ap').classList.add('open');
+  showSec('syncsetup', document.querySelector('.side-btn'));
+}
+
+function showSec(id, btn) {
+  document.querySelectorAll('.aps').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ── SYNC STATUS ──
+function updateSyncStatus() {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  if (canWrite() && GIST.gistId)
+    el.innerHTML = '<span style="color:var(--green)">● Synced via GitHub Gist — works on all devices</span>';
+  else if (canWrite())
+    el.innerHTML = '<span style="color:var(--gold)">● Token saved — save any section to create Gist</span>';
+  else
+    el.innerHTML = '<span style="color:var(--text3)">● Not synced — enter GitHub token below</span>';
+}
+
+async function saveSyncConfig() {
+  const token  = document.getElementById('i-gist-token').value.trim();
+  const gistId = document.getElementById('i-gist-id').value.trim();
+  const out    = document.getElementById('sync-test-result');
+  if (!token) { out.style.color = 'var(--red)'; out.textContent = '✕ Token is required'; return; }
+  GIST.token  = token;
+  GIST.gistId = gistId;
+  try { localStorage.setItem('pf_gist', JSON.stringify(GIST)); } catch (e) {}
+  out.style.color = 'var(--text2)';
+  out.textContent = 'Checking token…';
+  try {
+    const res  = await fetch('https://api.github.com/user', { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } });
+    const data = await res.json();
+    if (!res.ok) { out.style.color = 'var(--red)'; out.textContent = '✕ ' + (data.message || 'Invalid token'); return; }
+    out.textContent = `Token OK (${data.login}) — saving to Gist…`;
+    const r = await gistSave();
+    if (r === true) {
+      document.getElementById('i-gist-id').value = GIST.gistId;
+      out.style.color = 'var(--green)';
+      out.innerHTML = `✓ Synced as <strong>${data.login}</strong>!<br><br>
+        <strong style="color:var(--gold)">⚠ IMPORTANT — last step:</strong><br>
+        Bake this Gist ID into both <em>index.html</em> and <em>admin.html</em> so all devices load your data:<br>
+        <span style="background:var(--bg3);padding:.2rem .5rem;display:inline-block;margin-top:.4rem;font-size:.75rem">${GIST.gistId}</span><br><br>
+        Or click below to download updated copies of both files.`;
+      const dlBtn = document.createElement('button');
+      dlBtn.className = 'ap-save';
+      dlBtn.style.marginTop = '1rem';
+      dlBtn.textContent = '⬇ Download Updated Files (Gist ID baked in)';
+      dlBtn.onclick = () => downloadBakedFiles(GIST.gistId);
+      out.appendChild(dlBtn);
+      toast('Sync active ✓');
+      updateSyncStatus();
+    } else {
+      out.style.color = 'var(--red)';
+      out.textContent = '✕ Gist error: ' + r;
+    }
+  } catch (e) { out.style.color = 'var(--red)'; out.textContent = '✕ ' + e.message; }
+}
+
+function downloadBakedFiles(gistId) {
+  const src     = document.documentElement.outerHTML;
+  const updated = src.replace(
+    "const BAKED_GIST_ID = '';",
+    `const BAKED_GIST_ID = '${gistId}';`
+  );
+  const blob = new Blob([updated], { type: 'text/html' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'admin.html';
+  a.click();
+  toast('Downloaded admin.html — also update BAKED_GIST_ID in index.html');
+}
+
+// ── SECTION SAVES ──
+function saveIdentity() {
+  S.name   = document.getElementById('i-name').value.trim();
+  S.badge  = document.getElementById('i-badge').value.trim();
+  S.sub    = document.getElementById('i-sub').value.trim();
+  S.desc   = document.getElementById('i-desc').value.trim();
+  S.ptitle = document.getElementById('i-ptitle').value.trim();
+  S.footer = document.getElementById('i-footer').value.trim();
+  save(); toast('Identity saved ✓');
+}
+function saveBio() {
+  S.bio = document.getElementById('i-bio').value.trim();
+  save(); toast('Bio saved ✓');
+}
+function saveSkills() {
+  const r = document.getElementById('i-skills').value.trim();
+  S.skills = r ? r.split('\n').filter(Boolean).map(l => {
+    const p = l.split(',');
+    return { n: (p[0] || '').trim(), l: parseInt(p[1]) || 50 };
+  }) : [];
+  save(); toast('Skills saved ✓');
+}
+function saveStats() {
+  S.yr = document.getElementById('i-yr').value.trim();
+  S.pj = document.getElementById('i-pj').value.trim();
+  S.cl = document.getElementById('i-cl').value.trim();
+  save(); toast('Stats saved ✓');
+}
+function saveContact() {
+  S.em = document.getElementById('c-em').value.trim();
+  S.ph = document.getElementById('c-ph').value.trim();
+  S.lo = document.getElementById('c-lo').value.trim();
+  S.av = document.getElementById('c-av').value.trim();
+  save(); toast('Contact saved ✓');
+}
+function saveSocials() {
+  S.gh = document.getElementById('s-gh2').value.trim();
+  S.li = document.getElementById('s-li2').value.trim();
+  S.tw = document.getElementById('s-tw2').value.trim();
+  save(); toast('Socials saved ✓');
+}
+function changePW() {
+  const cur = document.getElementById('pw-cur').value;
+  const nw  = document.getElementById('pw-nw').value;
+  const cf  = document.getElementById('pw-cf').value;
+  const m   = document.getElementById('pw-msg');
+  if (cur !== adminPW)  { m.style.color = 'var(--red)';   m.textContent = '✕ Current password wrong'; return; }
+  if (!nw)              { m.style.color = 'var(--red)';   m.textContent = '✕ Cannot be empty'; return; }
+  if (nw !== cf)        { m.style.color = 'var(--red)';   m.textContent = '✕ Passwords do not match'; return; }
+  adminPW = nw;
+  save();
+  m.style.color = 'var(--green)';
+  m.textContent = '✓ Password updated!';
+  ['pw-cur', 'pw-nw', 'pw-cf'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ── PHOTO ──
+async function handlePhotoUp(e) {
+  const f = e.target.files[0]; if (!f) return;
+  showProg('ph-prog', 'Uploading…', 0);
+  const url = await uploadToCloud(f);
+  hideProg('ph-prog');
+  if (url) { S.photo = url; save(); renderPhotoAdmin(); toast('Photo uploaded ✓'); }
+}
+function delPhoto() { S.photo = null; save(); renderPhotoAdmin(); }
+function renderPhotoAdmin() {
+  const pa = document.getElementById('ph-prev');
+  if (pa) pa.innerHTML = S.photo
+    ? `<div class="pprev-wrap"><img class="pprev" src="${S.photo}"><button class="pprev-del" onclick="delPhoto()">×</button></div>`
+    : '';
+}
+
+// ── PROJECTS ──
+async function handleProjImg(e) {
+  const f = e.target.files[0]; if (!f) return;
+  document.getElementById('p-img-lbl').textContent = 'Uploading…';
+  const url = await uploadToCloud(f);
+  document.getElementById('p-img-lbl').textContent = url ? '✓ Uploaded' : '✗ Failed';
+  if (url) tmpPImg = url;
+}
+function addProject() {
+  const ti = document.getElementById('p-ti').value.trim();
+  if (!ti) { toast('⚠ Title required'); return; }
+  S.projects.push({
+    ti,
+    tg: document.getElementById('p-tg').value.trim(),
+    de: document.getElementById('p-de').value.trim(),
+    tc: document.getElementById('p-tc').value.trim(),
+    ur: document.getElementById('p-ur').value.trim(),
+    img: tmpPImg
+  });
+  tmpPImg = null;
+  ['p-ti', 'p-tg', 'p-de', 'p-tc', 'p-ur'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('p-img-lbl').textContent = 'Click to upload image';
+  save(); renderAdminProjs(); toast('Project added ✓');
+}
+function delProj(i) { S.projects.splice(i, 1); save(); renderAdminProjs(); toast('Project deleted'); }
+function renderAdminProjs() {
+  const l = document.getElementById('apj-list');
+  if (!S.projects.length) { l.innerHTML = '<div class="no-items">No projects yet.</div>'; return; }
+  l.innerHTML = S.projects.map((p, i) =>
+    `<div class="apj-item">
+      <div class="apj-thumb">${p.img ? `<img src="${p.img}">` : ''}</div>
+      <div class="apj-info">
+        <div class="apj-title">${p.ti}</div>
+        <div class="apj-tag">${p.tg || 'Project'}</div>
+      </div>
+      <button class="apj-del" onclick="delProj(${i})">Delete</button>
+    </div>`
+  ).join('');
+}
+
+// ── GALLERY ──
+async function handleGalUp(e) {
+  const files = Array.from(e.target.files); if (!files.length) return;
+  const total = files.length; let done = 0;
+  showProg('gal-prog', `Uploading 0/${total}…`, 0);
+  for (let i = 0; i < files.length; i += 3) {
+    const batch = files.slice(i, i + 3);
+    const urls  = await Promise.all(batch.map(f => uploadToCloud(f)));
+    urls.forEach(u => { if (u) S.gallery.push(u); });
+    done += batch.length;
+    showProg('gal-prog', `Uploading ${Math.min(done, total)}/${total}…`, Math.round(done / total * 100));
+  }
+  hideProg('gal-prog');
+  save(); renderAdminGal(); toast(`${S.gallery.length} photos ✓`);
+  e.target.value = '';
+}
+function delGal(i) { S.gallery.splice(i, 1); save(); renderAdminGal(); }
+function renderAdminGal() {
+  const g = document.getElementById('agrid');
+  if (!S.gallery.length) { g.innerHTML = '<div class="no-items" style="grid-column:span 4">No photos yet.</div>'; return; }
+  g.innerHTML = S.gallery.map((src, i) =>
+    `<div class="agi">
+      <img src="${src}">
+      <button class="agi-del" onclick="delGal(${i})">×</button>
+    </div>`
+  ).join('');
+}
+
+// ── UTILS ──
+function showProg(id, label, pct) {
+  const el = document.getElementById(id); if (!el) return;
+  el.style.display = 'block';
+  el.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text2);margin-bottom:.4rem">${label}</div><div style="height:3px;background:var(--border);overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(to right,var(--accent),var(--accent2));transition:width .3s"></div></div>`;
+}
+function hideProg(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+function toast(msg)   { const t = document.getElementById('toastEl'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3500); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const pwOv = document.getElementById('pw-ov');
+    if (!pwOv.classList.contains('hidden')) window.location.href = 'index.html';
+  }
+});
+
+// ── BOOT ──
+(async () => {
+  await loadData();
+  // Show password screen — admin must authenticate
+  document.getElementById('pw-in').focus();
+})();
+</script>
+</body>
+</html>
