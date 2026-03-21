@@ -326,6 +326,11 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text)}
             <div class="fg2"><label class="fl2">Phone</label><input class="fi2" id="c-ph" placeholder="+250 700 000 000"></div>
             <div class="fg2"><label class="fl2">Location</label><input class="fi2" id="c-lo" placeholder="Kigali, Rwanda"></div>
             <div class="fg2"><label class="fl2">Availability</label><input class="fi2" id="c-av" placeholder="Available for freelance"></div>
+            <div class="fg2" style="grid-column:span 2">
+              <label class="fl2">WhatsApp Number (with country code, digits only)</label>
+              <input class="fi2" id="c-wa" placeholder="250794703700">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;color:var(--text3);margin-top:.3rem">e.g. 250700000000 — no +, spaces, or dashes. Contact form messages will open WhatsApp with a pre-filled message.</div>
+            </div>
           </div>
           <button class="ap-save" onclick="saveContact()">Save Contact</button>
         </div>
@@ -385,7 +390,7 @@ let S = {
   name: '', badge: '', sub: '', desc: '', ptitle: '', footer: '',
   bio: '', skills: [], yr: '', pj: '', cl: '', photo: null,
   projects: [], gallery: [],
-  em: '', ph: '', lo: '', av: '', gh: '', li: '', tw: ''
+  em: '', ph: '', lo: '', av: '', wa: '250794703700', gh: '', li: '', tw: ''
 };
 let adminPW = '9870';  // stored separately from public data
 let tmpPImg = null;
@@ -539,6 +544,7 @@ function openAdmin() {
   document.getElementById('c-ph').value      = S.ph      || '';
   document.getElementById('c-lo').value      = S.lo      || '';
   document.getElementById('c-av').value      = S.av      || '';
+  document.getElementById('c-wa').value      = S.wa      || '';
   document.getElementById('s-gh2').value     = S.gh      || '';
   document.getElementById('s-li2').value     = S.li      || '';
   document.getElementById('s-tw2').value     = S.tw      || '';
@@ -657,6 +663,7 @@ function saveContact() {
   S.ph = document.getElementById('c-ph').value.trim();
   S.lo = document.getElementById('c-lo').value.trim();
   S.av = document.getElementById('c-av').value.trim();
+  S.wa = document.getElementById('c-wa').value.replace(/\D/g, ''); // digits only
   save(); toast('Contact saved ✓');
 }
 function saveSocials() {
