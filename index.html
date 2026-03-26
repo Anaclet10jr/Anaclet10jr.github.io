@@ -147,33 +147,81 @@ nav{
 .sk-fill::after{content:'';position:absolute;right:0;top:50%;width:6px;height:6px;background:var(--accent2);border-radius:50%;transform:translateY(-50%);box-shadow:0 0 8px var(--accent2)}
 
 /* ═══════════════════════════════
-   PROJECTS — MARQUEE SCROLL
+   PROJECTS — PAGINATED SLIDER
 ═══════════════════════════════ */
-.proj-marquee-wrap{
-  overflow:hidden;
-  position:relative;
-  /* fade edges */
+.proj-slider-wrap {
+  position: relative;
 }
-.proj-marquee-wrap::before,
-.proj-marquee-wrap::after{
-  content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none;
+.proj-slider-viewport {
+  overflow: hidden;
+  width: 100%;
 }
-.proj-marquee-wrap::before{left:0;background:linear-gradient(to right,var(--bg),transparent)}
-.proj-marquee-wrap::after{right:0;background:linear-gradient(to left,var(--bg),transparent)}
-.sec-alt .proj-marquee-wrap::before{background:linear-gradient(to right,var(--bg2),transparent)}
-.sec-alt .proj-marquee-wrap::after{background:linear-gradient(to left,var(--bg2),transparent)}
+.proj-marquee {
+  display: flex;
+  gap: 1.5rem;
+  transition: transform 0.45s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+  width: max-content;
+}
+.proj-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.proj-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--border2);
+  padding: .65rem 1.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .25s;
+  clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);
+}
+.proj-nav-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: rgba(79,142,247,.06);
+}
+.proj-nav-btn:disabled {
+  opacity: .3;
+  cursor: not-allowed;
+}
+.proj-nav-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  letter-spacing: .12em;
+  color: var(--text3);
+  min-width: 60px;
+  text-align: center;
+}
+/* Fade edges */
+.proj-slider-wrap::before,
+.proj-slider-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 60px;
+  z-index: 2;
+  pointer-events: none;
+}
+.proj-slider-wrap::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+.proj-slider-wrap::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
+.sec-alt .proj-slider-wrap::before { background: linear-gradient(to right, var(--bg2), transparent); }
+.sec-alt .proj-slider-wrap::after  { background: linear-gradient(to left,  var(--bg2), transparent); }
 
-.proj-marquee{
-  display:flex;gap:1.5rem;
-  animation:marqueeScroll 40s linear infinite;
-  width:max-content;
-}
-.proj-marquee:hover{animation-play-state:paused}
-@keyframes marqueeScroll{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
-}
+/* Static grid fallback when only 1-2 projects */
+.proj-static{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem}
+.proj-static .pcard{width:auto}
 
+/* ── Project Card ── */
 .pcard{
   background:var(--surface);border:1px solid var(--border);
   overflow:hidden;position:relative;
@@ -207,10 +255,6 @@ nav{
 .pchip{font-family:'JetBrains Mono',monospace;font-size:.55rem;background:var(--chip-bg);border:1px solid var(--chip-border);color:var(--text2);padding:.2rem .5rem;border-radius:2px}
 .empty-pcard{background:var(--surface);border:1px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;min-height:280px;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;width:100%}
 
-/* Static grid fallback when only 1-2 projects */
-.proj-static{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem}
-.proj-static .pcard{width:auto}
-
 /* ═══════════════════════════════
    GALLERY — See More / See Less
 ═══════════════════════════════ */
@@ -225,19 +269,8 @@ nav{
 .gempty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;color:var(--text3);border:1px dashed var(--border);padding:3rem;grid-column:span 3}
 .gempty span{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase}
 
-/* See More / Less button */
-.gal-toggle-wrap{
-  display:flex;justify-content:center;margin-top:2rem;
-}
-.gal-toggle-btn{
-  display:inline-flex;align-items:center;gap:.5rem;
-  background:transparent;color:var(--accent);
-  border:1px solid var(--border2);
-  padding:.7rem 2rem;
-  font-family:'JetBrains Mono',monospace;font-size:.7rem;
-  letter-spacing:.15em;text-transform:uppercase;cursor:pointer;
-  transition:all .25s;
-}
+.gal-toggle-wrap{display:flex;justify-content:center;margin-top:2rem}
+.gal-toggle-btn{display:inline-flex;align-items:center;gap:.5rem;background:transparent;color:var(--accent);border:1px solid var(--border2);padding:.7rem 2rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s}
 .gal-toggle-btn:hover{border-color:var(--accent);background:rgba(79,142,247,.06)}
 .gal-toggle-btn .tog-arrow{transition:transform .3s;display:inline-block}
 .gal-toggle-btn.expanded .tog-arrow{transform:rotate(180deg)}
@@ -305,13 +338,9 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
 ═══════════════════════════════ */
 @media(max-width:1024px){
   nav{padding:1rem 2rem}
-  /* Hero: stack, but KEEP photo */
   #hero{grid-template-columns:1fr;grid-template-rows:auto auto}
   .hero-left{padding:6rem 2rem 2rem}
-  .hero-right{
-    padding:1.5rem 2rem 2rem;
-    justify-content:flex-start;
-  }
+  .hero-right{padding:1.5rem 2rem 2rem;justify-content:flex-start}
   .profile-frame{width:220px}
   .pimg-wrap{width:220px;height:275px}
   .hero-stats{position:static;padding:0;margin-top:2rem}
@@ -321,11 +350,10 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
   footer{padding:1.5rem 2rem}
   .nav-center{display:none}
   .hamburger{display:flex}
+  /* Slider: show 2 cards on tablet */
+  .pcard{width:280px}
 }
 
-/* ═══════════════════════════════
-   RESPONSIVE — PHONE (< 640px)
-═══════════════════════════════ */
 @media(max-width:640px){
   nav{padding:.9rem 1.2rem}
   .hero-left{padding:5.5rem 1.2rem 1.5rem}
@@ -336,7 +364,6 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
   .btn-p,.btn-g{width:100%;justify-content:center;padding:.8rem 1.5rem}
   .hero-stats{gap:1.5rem}
   .stat .sn{font-size:1.8rem}
-  /* Compact photo on phone */
   .hero-right{padding:1rem 1.2rem 2rem;justify-content:center}
   .profile-frame{width:160px}
   .pimg-wrap{width:160px;height:200px}
@@ -350,7 +377,9 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
   .fsocs{justify-content:center}
   .lb-nav{display:none}
   .con-grid{gap:2rem}
-  .pcard{width:280px}
+  /* Slider: single card on phone */
+  .pcard{width:calc(100vw - 3.4rem)}
+  .proj-nav-btn{padding:.6rem 1.1rem;font-size:.62rem}
 }
 
 @media(max-width:380px){
@@ -409,7 +438,6 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
       <div class="stat"><div class="sn" id="st-c">0+</div><div class="sl">Clients</div></div>
     </div>
   </div>
-  <!-- Profile photo now visible on ALL screen sizes -->
   <div class="hero-right">
     <div class="profile-frame">
       <div class="pimg-wrap" id="pimg-wrap">
@@ -435,7 +463,6 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
 <section id="projects" class="sec">
   <div class="sh"><span class="sn2">// 02</span><h2 class="st">Selected Work</h2><div class="sl2"></div></div>
   <div id="proj-container">
-    <!-- Filled by JS: either marquee or static grid -->
     <div class="empty-pcard">
       <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>
       <span>Projects coming soon</span>
@@ -620,8 +647,9 @@ function renderPhoto(){
   } else { ph.style.display=''; const img=wrap.querySelector('img.pp'); if(img) img.remove(); }
 }
 
-// ── PROJECTS with Marquee ──
+// ── PROJECTS — Paginated Slider ──
 const READ_MORE_CHARS = 140;
+let projPage = 0;
 
 function buildPCard(p, idx) {
   const chips=(p.tc||'').split(',').filter(Boolean).map(t=>`<span class="pchip">${t.trim()}</span>`).join('');
@@ -654,29 +682,76 @@ function buildPCard(p, idx) {
     </div>`;
 }
 
-function renderProjects(){
+function renderProjects() {
+  projPage = 0;
   const container = document.getElementById('proj-container');
   container.innerHTML = '';
-  if(!S.projects||!S.projects.length){
-    container.innerHTML='<div class="empty-pcard"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg><span>Projects coming soon</span></div>';
+
+  if (!S.projects || !S.projects.length) {
+    container.innerHTML = '<div class="empty-pcard"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg><span>Projects coming soon</span></div>';
     return;
   }
 
-  // Use marquee if 3+ projects, static grid otherwise
-  if(S.projects.length >= 3){
-    // Duplicate cards for seamless loop
-    const cards = S.projects.map((p,i)=>buildPCard(p,i)).join('');
-    const marqueeWrap = document.createElement('div');
-    marqueeWrap.className = 'proj-marquee-wrap';
-    marqueeWrap.innerHTML = `<div class="proj-marquee" id="proj-marquee">${cards}${cards}</div>`;
-    container.appendChild(marqueeWrap);
-  } else {
+  // Static grid for 1–2 projects
+  if (S.projects.length < 3) {
     const grid = document.createElement('div');
     grid.className = 'proj-static';
-    grid.innerHTML = S.projects.map((p,i)=>buildPCard(p,i)).join('');
+    grid.innerHTML = S.projects.map((p, i) => buildPCard(p, i)).join('');
     container.appendChild(grid);
+    return;
   }
+
+  // Paginated slider for 3+ projects
+  const wrap = document.createElement('div');
+  wrap.className = 'proj-slider-wrap';
+  wrap.innerHTML = `
+    <div class="proj-slider-viewport">
+      <div class="proj-marquee" id="proj-marquee">
+        ${S.projects.map((p, i) => buildPCard(p, i)).join('')}
+      </div>
+    </div>
+    <div class="proj-nav-row">
+      <button class="proj-nav-btn" id="proj-prev" onclick="projSlide(-1)">← Prev</button>
+      <span class="proj-nav-counter" id="proj-counter">01 / ${String(S.projects.length).padStart(2,'0')}</span>
+      <button class="proj-nav-btn" id="proj-next" onclick="projSlide(1)">Next →</button>
+    </div>`;
+  container.appendChild(wrap);
+  // Initial state after DOM is ready
+  requestAnimationFrame(updateSlider);
 }
+
+function projSlide(dir) {
+  const max = S.projects.length - 1;
+  projPage = Math.max(0, Math.min(projPage + dir, max));
+  updateSlider();
+}
+
+function updateSlider() {
+  const marquee = document.getElementById('proj-marquee');
+  const prev    = document.getElementById('proj-prev');
+  const next    = document.getElementById('proj-next');
+  const counter = document.getElementById('proj-counter');
+  if (!marquee) return;
+
+  const card = marquee.querySelector('.pcard');
+  if (!card) return;
+
+  const gap    = 24; // matches CSS gap: 1.5rem
+  const cardW  = card.getBoundingClientRect().width || 340;
+  const offset = projPage * (cardW + gap);
+
+  marquee.style.transform = `translateX(-${offset}px)`;
+
+  const total = S.projects.length;
+  if (counter) counter.textContent = `${String(projPage + 1).padStart(2,'0')} / ${String(total).padStart(2,'0')}`;
+  if (prev)    prev.disabled    = projPage === 0;
+  if (next)    next.disabled    = projPage >= total - 1;
+}
+
+// Update slider on resize so card widths recalculate
+window.addEventListener('resize', () => {
+  if (document.getElementById('proj-marquee')) updateSlider();
+});
 
 function toggleReadMore(idx) {
   const desc = document.getElementById(`pdesc-${idx}`);
@@ -719,21 +794,16 @@ function renderGallery(){
     g.appendChild(el);
   });
 
-  // Show button only if more than GAL_PER_PAGE items
   if(toggleWrap) toggleWrap.style.display = S.gallery.length > GAL_PER_PAGE ? 'flex' : 'none';
 }
 
 function toggleGallery(){
   const btn = document.getElementById('gal-toggle-btn');
-  const items = document.querySelectorAll('#gal-grid .gi.hidden-item, #gal-grid .gi');
   galExpanded = !galExpanded;
 
   document.querySelectorAll('#gal-grid .gi').forEach((el, i)=>{
-    if(galExpanded){
-      el.classList.remove('hidden-item');
-    } else {
-      if(i >= GAL_PER_PAGE) el.classList.add('hidden-item');
-    }
+    if(galExpanded){ el.classList.remove('hidden-item'); }
+    else { if(i >= GAL_PER_PAGE) el.classList.add('hidden-item'); }
   });
 
   if(btn){
