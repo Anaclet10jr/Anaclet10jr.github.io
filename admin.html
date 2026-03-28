@@ -142,6 +142,9 @@ html,body{height:100%;font-family:'Syne',sans-serif;background:var(--bg);color:v
 .agi img{width:100%;height:100%;object-fit:cover}
 .agi-del{position:absolute;top:4px;right:4px;background:var(--red);color:#fff;border:none;width:22px;height:22px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
 .agi:hover .agi-del{opacity:1}
+.agi-desc{position:absolute;bottom:0;left:0;right:0;background:rgba(8,11,18,.82);border:none;border-top:1px solid rgba(79,142,247,.2);color:#e8edf5;font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.08em;padding:.3rem .4rem;outline:none;width:100%;transition:border-color .2s}
+.agi-desc:focus{border-top-color:var(--accent)}
+.agi-desc::placeholder{color:rgba(138,155,181,.5)}
 .no-items{color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.08em}
 .side-overlay{display:none;position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.5)}
 .side-overlay.show{display:block}
@@ -911,18 +914,36 @@ async function handleGalUp(e){
   for(let i=0;i<files.length;i+=3){
     const batch=files.slice(i,i+3);
     const urls=await Promise.all(batch.map(f=>uploadToCloud(f)));
-    urls.forEach(u=>{if(u)S.gallery.push(u);}); done+=batch.length;
+    urls.forEach(u=>{if(u)S.gallery.push({src:u,desc:''});}); done+=batch.length;
     showProg('gal-prog',`Uploading ${Math.min(done,total)}/${total}…`,Math.round(done/total*100));
   }
   hideProg('gal-prog'); save(); renderAdminGal(); toast(`${S.gallery.length} photos ✓`); e.target.value='';
 }
 function delGal(i){S.gallery.splice(i,1);save();renderAdminGal();}
+function galItemSrc(item){ return typeof item==='string'?item:(item.src||''); }
+function galItemDesc(item){ return typeof item==='string'?'':(item.desc||''); }
+
 function renderAdminGal(){
   const g=document.getElementById('agrid');
   if(!S.gallery.length){g.innerHTML='<div class="no-items" style="grid-column:span 4">No photos yet.</div>';return;}
-  g.innerHTML=S.gallery.map((src,i)=>
-    `<div class="agi"><img src="${src}"><button class="agi-del" onclick="delGal(${i})">×</button></div>`
-  ).join('');
+  g.innerHTML=S.gallery.map((item,i)=>{
+    const src=galItemSrc(item); const desc=galItemDesc(item);
+    return `<div class="agi">
+      <img src="${src}">
+      <button class="agi-del" onclick="delGal(${i})">×</button>
+      <input class="agi-desc" maxlength="60" placeholder="Short caption (≤10 words)…" value="${desc.replace(/"/g,'&quot;')}" oninput="updateGalDesc(${i},this.value)">
+    </div>`;
+  }).join('');
+}
+
+function updateGalDesc(i, val){
+  const item = S.gallery[i];
+  if(typeof item === 'string'){
+    S.gallery[i] = { src: item, desc: val };
+  } else {
+    S.gallery[i].desc = val;
+  }
+  save();
 }
 
 // ── UTILS ──
