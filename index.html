@@ -147,77 +147,73 @@ nav{
 .sk-fill::after{content:'';position:absolute;right:0;top:50%;width:6px;height:6px;background:var(--accent2);border-radius:50%;transform:translateY(-50%);box-shadow:0 0 8px var(--accent2)}
 
 /* ═══════════════════════════════
-   PROJECTS — PAGINATED SLIDER
+   PROJECTS — PAGINATED GRID
 ═══════════════════════════════ */
-.proj-slider-wrap {
-  position: relative;
-}
-.proj-slider-viewport {
-  overflow: hidden;
-  width: 100%;
-}
-.proj-marquee {
-  display: flex;
+.proj-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
-  transition: transform 0.45s cubic-bezier(.4,0,.2,1);
-  will-change: transform;
-  width: max-content;
 }
-.proj-nav-row {
+.proj-grid .pcard { width: auto; }
+
+/* ── Pagination nav — fixed bottom centre ── */
+.proj-pag-wrap {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-top: 2rem;
+  gap: 1rem;
+  background: var(--nav-bg);
+  border: 1px solid var(--border2);
+  backdrop-filter: blur(16px);
+  padding: .55rem 1.2rem;
+  box-shadow: 0 8px 32px var(--shadow);
+  clip-path: polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);
+  transition: opacity .3s;
 }
-.proj-nav-btn {
+.proj-pag-wrap.hidden { opacity:0; pointer-events:none; }
+.proj-pag-btn {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
+  gap: .4rem;
   background: transparent;
   color: var(--accent);
   border: 1px solid var(--border2);
-  padding: .65rem 1.6rem;
+  padding: .5rem 1.1rem;
   font-family: 'JetBrains Mono', monospace;
-  font-size: .68rem;
-  letter-spacing: .15em;
+  font-size: .62rem;
+  letter-spacing: .14em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all .25s;
-  clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);
+  transition: all .2s;
+  clip-path: polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,0 100%);
 }
-.proj-nav-btn:hover:not(:disabled) {
-  border-color: var(--accent);
-  background: rgba(79,142,247,.06);
-}
-.proj-nav-btn:disabled {
-  opacity: .3;
-  cursor: not-allowed;
-}
-.proj-nav-counter {
+.proj-pag-btn:hover:not(:disabled) { border-color:var(--accent); background:rgba(79,142,247,.08); }
+.proj-pag-btn:disabled { opacity:.3; cursor:not-allowed; }
+.proj-pag-counter {
   font-family: 'JetBrains Mono', monospace;
-  font-size: .7rem;
-  letter-spacing: .12em;
-  color: var(--text3);
-  min-width: 60px;
+  font-size: .65rem;
+  letter-spacing: .1em;
+  color: var(--text2);
+  min-width: 80px;
   text-align: center;
 }
-.proj-slider-wrap::before,
-.proj-slider-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 60px;
-  z-index: 2;
-  pointer-events: none;
-}
-.proj-slider-wrap::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
-.proj-slider-wrap::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
-.sec-alt .proj-slider-wrap::before { background: linear-gradient(to right, var(--bg2), transparent); }
-.sec-alt .proj-slider-wrap::after  { background: linear-gradient(to left,  var(--bg2), transparent); }
 
-.proj-static{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem}
-.proj-static .pcard{width:auto}
+/* Show-more toggle */
+.proj-more-wrap { display:flex; justify-content:center; margin-top:2rem; }
+.proj-more-btn {
+  display:inline-flex; align-items:center; gap:.5rem;
+  background:transparent; color:var(--accent);
+  border:1px solid var(--border2);
+  padding:.7rem 2rem; font-family:'JetBrains Mono',monospace;
+  font-size:.7rem; letter-spacing:.15em; text-transform:uppercase;
+  cursor:pointer; transition:all .25s;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);
+}
+.proj-more-btn:hover { border-color:var(--accent); background:rgba(79,142,247,.06); }
 
 /* ── Project Card ── */
 .pcard{
@@ -237,6 +233,8 @@ nav{
 .pbody{padding:1.5rem;display:flex;flex-direction:column;flex:1}
 .ptag{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
 .ptitle{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:.6rem;line-height:1.25}
+
+/* Read More */
 .pdesc-wrap{position:relative;margin-bottom:1.2rem}
 .pdesc{font-size:.85rem;line-height:1.7;color:var(--text2);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;transition:all .35s ease}
 .pdesc.expanded{display:block;-webkit-line-clamp:unset;overflow:visible}
@@ -252,295 +250,197 @@ nav{
 .empty-pcard{background:var(--surface);border:1px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;min-height:280px;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;width:100%}
 
 /* ═══════════════════════════════
-   GALLERY — REDESIGNED
-   Right-to-Left Marquee + See More
+   GALLERY — Marquee + Expand
 ═══════════════════════════════ */
 
-/* ── Outer wrapper with fade edges ── */
-.gal-marquee-outer {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  user-select: none;
-  padding: .25rem 0;
+/* ── Marquee track ── */
+.gal-marquee-outer{
+  position:relative;
+  overflow:hidden;
+  width:100%;
+  user-select:none;
+  /* fade edges */
 }
 .gal-marquee-outer::before,
-.gal-marquee-outer::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 100px;
-  z-index: 3;
-  pointer-events: none;
-  transition: opacity .3s;
+.gal-marquee-outer::after{
+  content:'';position:absolute;top:0;bottom:0;width:80px;z-index:3;pointer-events:none;
 }
-.gal-marquee-outer::before {
-  left: 0;
-  background: linear-gradient(to right, var(--bg2) 0%, transparent 100%);
+.gal-marquee-outer::before{left:0;background:linear-gradient(to right,var(--bg2),transparent)}
+.gal-marquee-outer::after {right:0;background:linear-gradient(to left, var(--bg2),transparent)}
+
+.gal-marquee-track{
+  display:flex;
+  gap:.75rem;
+  animation:galScroll 60s linear infinite;
+  width:max-content;
+  cursor:pointer;
+  padding:.25rem 0;
 }
-.gal-marquee-outer::after {
-  right: 0;
-  background: linear-gradient(to left, var(--bg2) 0%, transparent 100%);
+.gal-marquee-track.paused{animation-play-state:paused}
+
+@keyframes galScroll{
+  0%  {transform:translateX(0)}
+  100%{transform:translateX(-50%)}
 }
 
-/* ── The scrolling track — RIGHT TO LEFT ── */
-.gal-marquee-track {
-  display: flex;
-  gap: .85rem;
-  /* direction: right → left = negative translateX over time */
-  animation: galScrollRTL 30s linear infinite;
-  width: max-content;
-  will-change: transform;
+/* ── Marquee image items ── */
+.gi-mq{
+  flex-shrink:0;
+  width:200px;
+  height:200px;
+  overflow:hidden;
+  position:relative;
+  background:var(--surface);
+  border:1px solid var(--border);
+  transition:border-color .25s,transform .3s,box-shadow .3s;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);
+}
+.gi-mq:hover{
+  border-color:var(--accent);
+  transform:translateY(-4px) scale(1.03);
+  box-shadow:0 12px 40px var(--shadow),0 0 0 1px rgba(79,142,247,.15);
+  z-index:2;
+}
+.gi-mq img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease,filter .3s}
+.gi-mq:hover img{transform:scale(1.08);filter:brightness(1.12)}
+.gi-mq-overlay{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(8,11,18,.5);opacity:0;transition:opacity .25s;
+}
+.gi-mq:hover .gi-mq-overlay{opacity:1}
+.gi-mq-overlay svg{color:#fff;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
+
+/* ── Photo description marquee overlay ── */
+.gi-mq-desc{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(to top,rgba(4,6,12,.92) 0%,rgba(4,6,12,.6) 60%,transparent 100%);
+  padding:.5rem 0 .45rem;
+  overflow:hidden;
+  opacity:0;
+  transition:opacity .3s;
+  pointer-events:none;
+}
+.gi-mq:hover .gi-mq-desc{opacity:1}
+.gi-mq-desc-inner{
+  display:inline-block;
+  white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.58rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.85);
+  animation:descScroll 14s linear infinite;
+  animation-play-state:paused;
+  padding-left:100%;
+}
+.gi-mq:hover .gi-mq-desc-inner{animation-play-state:running}
+@keyframes descScroll{
+  0%  {transform:translateX(0)}
+  100%{transform:translateX(-100%)}
 }
 
-/* Pause animation on hover */
-.gal-marquee-track.paused {
-  animation-play-state: paused;
+/* ── Expanded grid desc overlay ── */
+.gi-desc{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(to top,rgba(4,6,12,.92) 0%,rgba(4,6,12,.5) 60%,transparent 100%);
+  padding:.4rem 0 .35rem;
+  overflow:hidden;
+  opacity:0;
+  transition:opacity .3s;
+  pointer-events:none;
 }
+.gi:hover .gi-desc{opacity:1}
+.gi-desc-inner{
+  display:inline-block;
+  white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.55rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.85);
+  animation:descScroll 14s linear infinite;
+  animation-play-state:paused;
+  padding-left:100%;
+}
+.gi:hover .gi-desc-inner{animation-play-state:running}
 
-@keyframes galScrollRTL {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+/* ── Lightbox desc marquee ── */
+.lb-desc{
+  overflow:hidden;
+  width:min(500px,90vw);
+  margin-top:.5rem;
+  height:1.4rem;
 }
+.lb-desc-inner{
+  display:inline-block;
+  white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--text2);
+  animation:descScroll 14s linear infinite;
+  padding-left:100%;
+}
+.lb-desc.empty{display:none}
 
-/* ── Individual marquee image ── */
-.gi-mq {
-  flex-shrink: 0;
-  width: 210px;
-  height: 210px;
-  overflow: hidden;
-  position: relative;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
-  transition: border-color .3s, transform .35s cubic-bezier(.4,0,.2,1), box-shadow .35s;
+/* pause badge */
+.gal-pause-badge{
+  position:absolute;top:.75rem;right:.75rem;z-index:10;
+  background:rgba(8,11,18,.75);border:1px solid var(--border2);
+  color:var(--text2);font-family:'JetBrains Mono',monospace;
+  font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.25rem .65rem;pointer-events:none;
+  opacity:0;transition:opacity .25s;
 }
-.gi-mq:hover {
-  border-color: var(--accent);
-  transform: translateY(-5px) scale(1.04);
-  box-shadow: 0 16px 50px rgba(0,0,0,.5), 0 0 0 1px rgba(79,142,247,.2);
-  z-index: 2;
-}
-.gi-mq img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform .5s ease, filter .35s;
-}
-.gi-mq:hover img {
-  transform: scale(1.1);
-  filter: brightness(1.1);
-}
-.gi-mq-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgba(79,142,247,.15) 0%, rgba(8,11,18,.6) 100%);
-  opacity: 0;
-  transition: opacity .3s;
-}
-.gi-mq:hover .gi-mq-overlay { opacity: 1; }
-.gi-mq-overlay svg {
-  color: #fff;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,.8));
-}
+.gal-marquee-outer.is-paused .gal-pause-badge{opacity:1}
 
-/* ── Pause indicator ── */
-.gal-pause-badge {
-  position: absolute;
-  top: .75rem;
-  right: .75rem;
-  z-index: 10;
-  background: rgba(8,11,18,.82);
-  border: 1px solid var(--border2);
-  color: var(--accent);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .55rem;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  padding: .3rem .75rem;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .25s;
-  display: flex;
-  align-items: center;
-  gap: .4rem;
+/* ── Expanded full grid (shown after "See More") ── */
+.gal-expanded-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:.75rem;
+  margin-top:1.5rem;
+  overflow:hidden;
+  max-height:0;
+  transition:max-height .6s cubic-bezier(.4,0,.2,1);
 }
-.gal-pause-badge::before {
-  content: '';
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent);
-  animation: pulse 1.5s infinite;
-}
-.gal-marquee-outer.is-paused .gal-pause-badge { opacity: 1; }
+.gal-expanded-grid.open{max-height:4000px}
 
-/* ── Gallery meta row (count + hint) ── */
-.gal-meta-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1.5rem;
-  flex-wrap: wrap;
-  gap: .75rem;
+.gi{overflow:hidden;position:relative;background:var(--surface);border:1px solid var(--border);cursor:pointer;aspect-ratio:1/1;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);
+  transition:transform .3s,border-color .25s,box-shadow .3s;
 }
-.gal-count-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .6rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--text3);
-}
-.gal-count-badge span { color: var(--accent); font-weight: 600; }
-.gal-hover-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .58rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--text3);
-  opacity: .7;
-}
+.gi:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 8px 30px var(--shadow)}
+.gi img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease,filter .3s ease}
+.gi:hover img{transform:scale(1.06);filter:brightness(1.1)}
+.gi-zoom{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(8,11,18,.45);opacity:0;transition:opacity .25s}
+.gi:hover .gi-zoom{opacity:1}
+.gi-zoom svg{color:#fff;filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
 
-/* ── "See More" toggle button ── */
-.gal-toggle-wrap {
-  display: flex;
-  justify-content: center;
-  margin-top: 1.75rem;
-}
-.gal-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: .6rem;
-  background: transparent;
-  color: var(--accent);
-  border: 1px solid var(--border2);
-  padding: .8rem 2.4rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .68rem;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: border-color .25s, background .25s, transform .2s, box-shadow .25s;
-  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
-  position: relative;
-  overflow: hidden;
-}
-.gal-toggle-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(79,142,247,.06) 0%, rgba(124,106,240,.06) 100%);
-  opacity: 0;
-  transition: opacity .25s;
-}
-.gal-toggle-btn:hover::before { opacity: 1; }
-.gal-toggle-btn:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(79,142,247,.15);
-}
-.gal-toggle-btn .tog-icon {
-  display: flex;
-  align-items: center;
-  transition: transform .35s cubic-bezier(.4,0,.2,1);
-}
-.gal-toggle-btn.expanded .tog-icon { transform: rotate(180deg); }
+.gempty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;color:var(--text3);border:1px dashed var(--border);padding:3rem}
+.gempty span{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase}
 
-/* ── Expanded full photo grid ── */
-.gal-expanded-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: .85rem;
-  margin-top: 1.75rem;
-  /* Animate open/close */
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(12px);
-  transition:
-    max-height .65s cubic-bezier(.4,0,.2,1),
-    opacity .45s ease .1s,
-    transform .45s ease .1s;
+/* ── toggle button ── */
+.gal-toggle-wrap{display:flex;justify-content:center;margin-top:2rem}
+.gal-toggle-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:transparent;color:var(--accent);
+  border:1px solid var(--border2);
+  padding:.7rem 2rem;font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);
 }
-.gal-expanded-grid.open {
-  max-height: 6000px;
-  opacity: 1;
-  transform: translateY(0);
-}
+.gal-toggle-btn:hover{border-color:var(--accent);background:rgba(79,142,247,.06)}
+.gal-toggle-btn .tog-arrow{transition:transform .3s;display:inline-block}
+.gal-toggle-btn.expanded .tog-arrow{transform:rotate(180deg)}
 
-/* Individual grid items */
-.gi {
-  overflow: hidden;
-  position: relative;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  aspect-ratio: 1/1;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
-  transition: transform .3s, border-color .25s, box-shadow .3s;
-  /* Staggered entrance */
-  opacity: 0;
-  transform: scale(.94) translateY(10px);
+/* ── gallery count badge ── */
+.gal-count-hint{
+  font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text3);text-align:center;margin-top:.75rem;
 }
-.gal-expanded-grid.open .gi {
-  animation: giEntrance .4s ease forwards;
-}
-@keyframes giEntrance {
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-.gi:hover {
-  transform: translateY(-4px);
-  border-color: var(--accent);
-  box-shadow: 0 10px 35px var(--shadow), 0 0 0 1px rgba(79,142,247,.12);
-}
-.gi img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform .4s ease, filter .3s ease;
-}
-.gi:hover img { transform: scale(1.07); filter: brightness(1.08); }
-.gi-zoom {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(8,11,18,.45);
-  opacity: 0;
-  transition: opacity .25s;
-}
-.gi:hover .gi-zoom { opacity: 1; }
-.gi-zoom svg { color: #fff; filter: drop-shadow(0 1px 4px rgba(0,0,0,.6)); }
-
-/* Empty state */
-.gempty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: .75rem;
-  color: var(--text3);
-  border: 1px dashed var(--border);
-  padding: 4rem;
-  text-align: center;
-}
-.gempty span {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .6rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
+.gal-count-hint span{color:var(--accent)}
 
 /* ═══════════════════════════════
    CONTACT
@@ -584,14 +484,14 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
 ═══════════════════════════════ */
 .lb{position:fixed;inset:0;z-index:700;background:var(--lb-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s;backdrop-filter:blur(12px)}
 .lb.open{opacity:1;pointer-events:all}
-.lb-inner{position:relative;max-width:92vw;max-height:88vh;display:flex;align-items:center;justify-content:center}
-.lb img{max-width:92vw;max-height:85vh;object-fit:contain;border:1px solid var(--border2);box-shadow:0 30px 80px var(--shadow);animation:lbIn .25s ease both}
+.lb-inner{position:relative;display:flex;align-items:center;justify-content:center;max-width:min(92vw,1200px);max-height:80vh}
+.lb-inner img{display:block;max-width:100%;max-height:80vh;width:auto;height:auto;object-fit:contain;border:1px solid var(--border2);box-shadow:0 30px 80px var(--shadow);animation:lbIn .25s ease both}
 @keyframes lbIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
-.lb-x{position:fixed;top:1.2rem;right:1.5rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--text);width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;transition:all .2s;border-radius:2px}
+.lb-x{position:fixed;top:1.2rem;right:1.5rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--text);width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;transition:all .2s;border-radius:2px;z-index:701}
 .lb-x:hover{background:rgba(255,255,255,.15)}
 .lb-counter{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--text3);margin-top:.8rem;text-transform:uppercase}
-.lb-nav{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--text);width:40px;height:60px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;transition:all .2s;border-radius:2px;user-select:none}
-.lb-nav:hover{background:rgba(255,255,255,.15)}
+.lb-nav{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--text);width:44px;height:70px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;transition:all .2s;border-radius:2px;user-select:none;z-index:701}
+.lb-nav:hover{background:rgba(255,255,255,.2)}
 .lb-prev{left:1rem}.lb-next{right:1rem}
 
 /* ═══════════════════════════════
@@ -601,7 +501,7 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
 .toast.show{opacity:1}
 
 /* ═══════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — TABLET (< 1024px)
 ═══════════════════════════════ */
 @media(max-width:1024px){
   nav{padding:1rem 2rem}
@@ -617,9 +517,10 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
   footer{padding:1.5rem 2rem}
   .nav-center{display:none}
   .hamburger{display:flex}
+  /* Slider: show 2 cards on tablet */
   .pcard{width:280px}
-  .gi-mq{width:170px;height:170px}
 }
+
 @media(max-width:640px){
   nav{padding:.9rem 1.2rem}
   .hero-left{padding:5.5rem 1.2rem 1.5rem}
@@ -636,21 +537,22 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
   .pc{width:20px;height:20px}
   .sec{padding:4rem 1.2rem}
   .sh{margin-bottom:2.5rem}
-  .gi-mq{width:140px;height:140px}
+  .gi-mq{width:150px;height:150px}
   .gal-expanded-grid{grid-template-columns:repeat(2,1fr)}
   .cf-btns{grid-template-columns:1fr}
   footer{flex-direction:column;gap:1rem;text-align:center;padding:1.5rem 1.2rem}
   .fsocs{justify-content:center}
   .lb-nav{display:none}
   .con-grid{gap:2rem}
+  /* Slider: single card on phone */
   .pcard{width:calc(100vw - 3.4rem)}
   .proj-nav-btn{padding:.6rem 1.1rem;font-size:.62rem}
-  .gal-toggle-btn{padding:.75rem 1.8rem;font-size:.62rem}
 }
+
 @media(max-width:380px){
   .hero-stats{flex-wrap:wrap;gap:1rem}
   .sdiv{display:none}
-  .gi-mq{width:110px;height:110px}
+  .gi-mq{width:120px;height:120px}
   .gal-expanded-grid{grid-template-columns:1fr 1fr}
 }
 </style>
@@ -735,44 +637,25 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
   </div>
 </section>
 
-<!-- ═══════ GALLERY SECTION ═══════ -->
 <section id="gallery" class="sec sec-alt">
   <div class="sh"><span class="sn2">// 03</span><h2 class="st">Gallery</h2><div class="sl2"></div></div>
-
-  <!-- Right-to-left marquee strip -->
+  <!-- Marquee strip -->
   <div class="gal-marquee-outer" id="gal-marquee-outer" style="display:none">
     <div class="gal-marquee-track" id="gal-marquee-track"></div>
-    <div class="gal-pause-badge">Paused</div>
+    <div class="gal-pause-badge">&#9646;&#9646; Paused</div>
   </div>
-
-  <!-- Empty state (shown when no photos) -->
+  <!-- Empty state -->
   <div id="gal-empty" class="gempty">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:.2">
-      <rect x="3" y="3" width="18" height="18" rx="2"/>
-      <circle cx="8.5" cy="8.5" r="1.5"/>
-      <polyline points="21 15 16 10 5 21"/>
-    </svg>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
     <span>Photos appear here</span>
   </div>
-
-  <!-- Meta row: count + hover hint -->
-  <div class="gal-meta-row" id="gal-meta-row" style="display:none">
-    <div class="gal-count-badge" id="gal-count-badge"></div>
-    <span class="gal-hover-hint">Hover to pause · Click to enlarge</span>
-  </div>
-
-  <!-- Expanded full grid (hidden until "See More") -->
+  <!-- Count hint -->
+  <div class="gal-count-hint" id="gal-count-hint" style="display:none"></div>
+  <!-- Expanded full grid -->
   <div class="gal-expanded-grid" id="gal-expanded-grid"></div>
-
-  <!-- See More / See Less button -->
   <div class="gal-toggle-wrap" id="gal-toggle-wrap" style="display:none">
     <button class="gal-toggle-btn" id="gal-toggle-btn" onclick="toggleGallery()">
-      <span id="gal-toggle-label">See More</span>
-      <span class="tog-icon">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-      </span>
+      See More <span class="tog-arrow">&#9662;</span>
     </button>
   </div>
 </section>
@@ -830,13 +713,13 @@ footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify
   </div>
 </footer>
 
-<!-- Lightbox -->
 <div class="lb" id="lb">
   <button class="lb-x" onclick="closeLB()">×</button>
   <button class="lb-nav lb-prev" onclick="lbNav(-1)">‹</button>
   <button class="lb-nav lb-next" onclick="lbNav(1)">›</button>
   <div class="lb-inner"><img id="lb-img" src="" alt=""></div>
   <div class="lb-counter" id="lb-counter"></div>
+  <div class="lb-desc" id="lb-desc"><span class="lb-desc-inner" id="lb-desc-inner"></span></div>
 </div>
 <div class="toast" id="toastEl"></div>
 
@@ -940,9 +823,8 @@ function renderPhoto(){
   } else { ph.style.display=''; const img=wrap.querySelector('img.pp'); if(img) img.remove(); }
 }
 
-// ── PROJECTS ──
+// ── PROJECTS — Paginated Slider ──
 const READ_MORE_CHARS = 140;
-let projPage = 0;
 
 function buildPCard(p, idx) {
   const chips=(p.tc||'').split(',').filter(Boolean).map(t=>`<span class="pchip">${t.trim()}</span>`).join('');
@@ -975,65 +857,76 @@ function buildPCard(p, idx) {
     </div>`;
 }
 
+// ── PROJECTS — paginated grid, 10 per page ──
+const PROJ_PER_PAGE = 10;
+let projPage = 0;
+
 function renderProjects() {
   projPage = 0;
   const container = document.getElementById('proj-container');
   container.innerHTML = '';
+  hideProjPag();
+
   if (!S.projects || !S.projects.length) {
     container.innerHTML = '<div class="empty-pcard"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg><span>Projects coming soon</span></div>';
     return;
   }
-  if (S.projects.length < 3) {
-    const grid = document.createElement('div');
-    grid.className = 'proj-static';
-    grid.innerHTML = S.projects.map((p, i) => buildPCard(p, i)).join('');
-    container.appendChild(grid);
-    return;
-  }
-  const wrap = document.createElement('div');
-  wrap.className = 'proj-slider-wrap';
-  wrap.innerHTML = `
-    <div class="proj-slider-viewport">
-      <div class="proj-marquee" id="proj-marquee">
-        ${S.projects.map((p, i) => buildPCard(p, i)).join('')}
-      </div>
-    </div>
-    <div class="proj-nav-row">
-      <button class="proj-nav-btn" id="proj-prev" onclick="projSlide(-1)">← Prev</button>
-      <span class="proj-nav-counter" id="proj-counter">01 / ${String(S.projects.length).padStart(2,'0')}</span>
-      <button class="proj-nav-btn" id="proj-next" onclick="projSlide(1)">Next →</button>
-    </div>`;
-  container.appendChild(wrap);
-  requestAnimationFrame(updateSlider);
+
+  drawProjPage();
 }
 
-function projSlide(dir) {
-  const max = S.projects.length - 1;
-  projPage = Math.max(0, Math.min(projPage + dir, max));
-  updateSlider();
-}
-
-function updateSlider() {
-  const marquee = document.getElementById('proj-marquee');
-  const prev    = document.getElementById('proj-prev');
-  const next    = document.getElementById('proj-next');
-  const counter = document.getElementById('proj-counter');
-  if (!marquee) return;
-  const card = marquee.querySelector('.pcard');
-  if (!card) return;
-  const gap    = 24;
-  const cardW  = card.getBoundingClientRect().width || 340;
-  const offset = projPage * (cardW + gap);
-  marquee.style.transform = `translateX(-${offset}px)`;
+function drawProjPage() {
+  const container = document.getElementById('proj-container');
+  container.innerHTML = '';
   const total = S.projects.length;
-  if (counter) counter.textContent = `${String(projPage + 1).padStart(2,'0')} / ${String(total).padStart(2,'0')}`;
-  if (prev)    prev.disabled    = projPage === 0;
-  if (next)    next.disabled    = projPage >= total - 1;
+  const start = projPage * PROJ_PER_PAGE;
+  const end   = Math.min(start + PROJ_PER_PAGE, total);
+  const page  = S.projects.slice(start, end);
+
+  const grid = document.createElement('div');
+  grid.className = 'proj-grid';
+  grid.innerHTML = page.map((p, i) => buildPCard(p, start + i)).join('');
+  container.appendChild(grid);
+
+  // show-more / pagination only if multiple pages
+  if (total > PROJ_PER_PAGE) {
+    showProjPag(projPage, Math.ceil(total / PROJ_PER_PAGE));
+  } else {
+    hideProjPag();
+  }
 }
 
-window.addEventListener('resize', () => {
-  if (document.getElementById('proj-marquee')) updateSlider();
-});
+function showProjPag(page, totalPages) {
+  let wrap = document.getElementById('proj-pag-wrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'proj-pag-wrap';
+    wrap.id = 'proj-pag-wrap';
+    wrap.innerHTML = `
+      <button class="proj-pag-btn" id="proj-pag-prev" onclick="projPagStep(-1)">&#8592; Prev</button>
+      <span class="proj-pag-counter" id="proj-pag-counter"></span>
+      <button class="proj-pag-btn" id="proj-pag-next" onclick="projPagStep(1)">Next &#8594;</button>`;
+    document.body.appendChild(wrap);
+  }
+  wrap.classList.remove('hidden');
+  document.getElementById('proj-pag-counter').textContent =
+    'Page ' + String(page+1).padStart(2,'0') + ' / ' + String(totalPages).padStart(2,'0');
+  document.getElementById('proj-pag-prev').disabled = page === 0;
+  document.getElementById('proj-pag-next').disabled = page >= totalPages - 1;
+}
+
+function hideProjPag() {
+  const wrap = document.getElementById('proj-pag-wrap');
+  if (wrap) wrap.classList.add('hidden');
+}
+
+function projPagStep(dir) {
+  const total = S.projects ? S.projects.length : 0;
+  const totalPages = Math.ceil(total / PROJ_PER_PAGE);
+  projPage = Math.max(0, Math.min(projPage + dir, totalPages - 1));
+  drawProjPage();
+  document.getElementById('projects').scrollIntoView({behavior:'smooth'});
+}
 
 function toggleReadMore(idx) {
   const desc = document.getElementById(`pdesc-${idx}`);
@@ -1046,124 +939,132 @@ function toggleReadMore(idx) {
     : 'Read more <span class="rm-arrow">▾</span>';
 }
 
-// ══════════════════════════════════════
-//  GALLERY — Right-to-Left Marquee + See More
-// ══════════════════════════════════════
-const GAL_MARQUEE_COUNT = 8;   // first N photos shown in marquee
-let galExpanded = false;
-let galPauseHandlers = [];     // track event listeners for cleanup
+// ── GALLERY — Marquee strip + paginated expand ──
+// items: string URL (legacy) or {src, desc} object
+const GAL_MARQUEE_COUNT = 6;
+const GAL_PAGE_SIZE     = 10;
+let galShown = 0;
 
-function renderGallery() {
+function galSrc(item)  { return typeof item === 'string' ? item : (item.src  || ''); }
+function galDesc(item) { return typeof item === 'string' ? ''   : (item.desc || ''); }
+
+function makeMqItem(item) {
+  const src  = galSrc(item);
+  const desc = galDesc(item);
+  const safe = src.replace(/'/g, "\'");
+  const div  = document.createElement('div');
+  div.className = 'gi-mq';
+  div.innerHTML =
+    '<img src="' + src + '" alt="" loading="lazy">' +
+    '<div class="gi-mq-overlay" onclick="openLB(\'' + safe + '\')">' +
+      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>' +
+    '</div>' +
+    (desc ? '<div class="gi-mq-desc"><span class="gi-mq-desc-inner">' + desc + '</span></div>' : '');
+  return div;
+}
+
+function makeGridItem(item, i) {
+  const src  = galSrc(item);
+  const desc = galDesc(item);
+  const safe = src.replace(/'/g, "\'");
+  const div  = document.createElement('div');
+  div.className = 'gi';
+  div.innerHTML =
+    '<img src="' + src + '" alt="Photo ' + (i+1) + '" loading="lazy" onclick="openLB(\'' + safe + '\')">' +
+    '<div class="gi-zoom" onclick="openLB(\'' + safe + '\')">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>' +
+    '</div>' +
+    (desc ? '<div class="gi-desc"><span class="gi-desc-inner">' + desc + '</span></div>' : '');
+  return div;
+}
+
+function renderGallery(){
   const outer      = document.getElementById('gal-marquee-outer');
   const track      = document.getElementById('gal-marquee-track');
   const emptyEl    = document.getElementById('gal-empty');
-  const metaRow    = document.getElementById('gal-meta-row');
-  const countBadge = document.getElementById('gal-count-badge');
+  const countHint  = document.getElementById('gal-count-hint');
   const expandGrid = document.getElementById('gal-expanded-grid');
   const toggleWrap = document.getElementById('gal-toggle-wrap');
   const toggleBtn  = document.getElementById('gal-toggle-btn');
-  const toggleLbl  = document.getElementById('gal-toggle-label');
 
-  // Reset state
-  track.innerHTML   = '';
+  track.innerHTML = '';
   expandGrid.innerHTML = '';
-  galExpanded = false;
-  if (toggleBtn) { toggleBtn.classList.remove('expanded'); }
-  if (toggleLbl) { toggleLbl.textContent = 'See More'; }
+  galShown = 0;
+  expandGrid.classList.remove('open');
+  if(toggleBtn){ toggleBtn.classList.remove('expanded'); toggleBtn.innerHTML='See More <span class="tog-arrow">&#9662;</span>'; }
 
-  // Remove old pause listeners
-  galPauseHandlers.forEach(({ el, type, fn }) => el.removeEventListener(type, fn));
-  galPauseHandlers = [];
-
-  if (!S.gallery || !S.gallery.length) {
-    emptyEl.style.display = '';
-    outer.style.display   = 'none';
-    metaRow.style.display = 'none';
-    if (toggleWrap) toggleWrap.style.display = 'none';
+  if(!S.gallery || !S.gallery.length){
+    emptyEl.style.display   = '';
+    outer.style.display     = 'none';
+    countHint.style.display = 'none';
+    if(toggleWrap) toggleWrap.style.display = 'none';
     return;
   }
 
   emptyEl.style.display = 'none';
   outer.style.display   = '';
-  metaRow.style.display = '';
 
-  // ── Build marquee items ──
-  // Use first GAL_MARQUEE_COUNT photos; if fewer, use all
-  const marqueePhotos = S.gallery.slice(0, Math.min(GAL_MARQUEE_COUNT, S.gallery.length));
+  // Build marquee: first N photos duplicated for seamless loop
+  const mqPhotos = S.gallery.slice(0, GAL_MARQUEE_COUNT);
+  [...mqPhotos, ...mqPhotos].forEach(item => track.appendChild(makeMqItem(item)));
 
-  // Duplicate for seamless looping (we shift -50%)
-  const loopSet = [...marqueePhotos, ...marqueePhotos];
-  loopSet.forEach((src) => {
-    const safe = src.replace(/'/g, "\\'");
-    const div  = document.createElement('div');
-    div.className = 'gi-mq';
-    div.innerHTML = `
-      <img src="${src}" alt="Gallery photo" loading="lazy">
-      <div class="gi-mq-overlay" onclick="openLB('${safe}')">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-        </svg>
-      </div>`;
-    track.appendChild(div);
-  });
+  // Pause on hover
+  outer.addEventListener('mouseenter', () => { outer.classList.add('is-paused');    track.classList.add('paused'); });
+  outer.addEventListener('mouseleave', () => { outer.classList.remove('is-paused'); track.classList.remove('paused'); });
 
-  // ── Pause on hover ──
-  const onEnter = () => { outer.classList.add('is-paused'); track.classList.add('paused'); };
-  const onLeave = () => { outer.classList.remove('is-paused'); track.classList.remove('paused'); };
-  outer.addEventListener('mouseenter', onEnter);
-  outer.addEventListener('mouseleave', onLeave);
-  galPauseHandlers.push(
-    { el: outer, type: 'mouseenter', fn: onEnter },
-    { el: outer, type: 'mouseleave', fn: onLeave }
-  );
-
-  // ── Count badge ──
   const total = S.gallery.length;
-  const shown = marqueePhotos.length;
-  if (total > shown) {
-    countBadge.innerHTML = `Showing <span>${shown}</span> of <span>${total}</span> photos`;
-    if (toggleWrap) toggleWrap.style.display = 'flex';
+  if(total > GAL_MARQUEE_COUNT){
+    countHint.innerHTML = 'Showing <span>' + GAL_MARQUEE_COUNT + '</span> of <span>' + total + '</span> photos — hover to pause';
+    countHint.style.display = '';
+    if(toggleWrap) toggleWrap.style.display = 'flex';
   } else {
-    countBadge.innerHTML = `<span>${total}</span> photo${total > 1 ? 's' : ''}`;
-    if (toggleWrap) toggleWrap.style.display = 'none';
+    countHint.innerHTML = '<span>' + total + '</span> photo' + (total>1?'s':'');
+    countHint.style.display = '';
+    if(toggleWrap) toggleWrap.style.display = 'none';
   }
-
-  // ── Build expanded grid (ALL photos) ──
-  S.gallery.forEach((src, i) => {
-    const safe = src.replace(/'/g, "\\'");
-    const div  = document.createElement('div');
-    div.className = 'gi';
-    // Stagger entrance animation delay
-    div.style.animationDelay = `${i * 40}ms`;
-    div.innerHTML = `
-      <img src="${src}" alt="Photo ${i + 1}" loading="lazy" onclick="openLB('${safe}')">
-      <div class="gi-zoom" onclick="openLB('${safe}')">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-        </svg>
-      </div>`;
-    expandGrid.appendChild(div);
-  });
 }
 
-function toggleGallery() {
+function toggleGallery(){
   const btn        = document.getElementById('gal-toggle-btn');
   const expandGrid = document.getElementById('gal-expanded-grid');
-  const label      = document.getElementById('gal-toggle-label');
+  const countHint  = document.getElementById('gal-count-hint');
+  const total      = S.gallery.length;
 
-  galExpanded = !galExpanded;
-  expandGrid.classList.toggle('open', galExpanded);
-
-  if (btn)   btn.classList.toggle('expanded', galExpanded);
-  if (label) label.textContent = galExpanded ? 'See Less' : 'See More';
-
-  // Scroll back to gallery heading when collapsing
-  if (!galExpanded) {
-    setTimeout(() => {
-      document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+  if(galShown === 0){
+    expandGrid.classList.add('open');
+    loadMoreGallery();
+  } else if(galShown >= total){
+    expandGrid.classList.remove('open');
+    setTimeout(()=>{
+      expandGrid.innerHTML = '';
+      galShown = 0;
+      countHint.innerHTML = 'Showing <span>' + GAL_MARQUEE_COUNT + '</span> of <span>' + total + '</span> photos — hover to pause';
+      if(btn){ btn.classList.remove('expanded'); btn.innerHTML='See More <span class="tog-arrow">&#9662;</span>'; }
+      document.getElementById('gallery').scrollIntoView({behavior:'smooth'});
+    }, 400);
+    return;
+  } else {
+    loadMoreGallery();
   }
 }
+
+function loadMoreGallery(){
+  const btn        = document.getElementById('gal-toggle-btn');
+  const expandGrid = document.getElementById('gal-expanded-grid');
+  const countHint  = document.getElementById('gal-count-hint');
+  const total      = S.gallery.length;
+  const newEnd     = Math.min(galShown + GAL_PAGE_SIZE, total);
+  for(let i = galShown; i < newEnd; i++) expandGrid.appendChild(makeGridItem(S.gallery[i], i));
+  galShown = newEnd;
+  countHint.innerHTML = 'Showing <span>' + galShown + '</span> of <span>' + total + '</span> photos';
+  if(btn){
+    btn.classList.add('expanded');
+    btn.innerHTML = galShown >= total
+      ? 'See Less <span class="tog-arrow" style="transform:rotate(180deg);display:inline-block">&#9662;</span>'
+      : 'See More (' + (total - galShown) + ' left) <span class="tog-arrow">&#9662;</span>';
+  }
+}
+
 
 // ── Contact ──
 function validate(){
@@ -1221,17 +1122,25 @@ document.head.appendChild(style);
 // ── Lightbox ──
 let lbIndex=0;
 function openLB(src){
-  lbIndex = S.gallery.indexOf(src);
+  // find by src string (works for both string[] and {src,desc}[])
+  lbIndex = S.gallery.findIndex(item => galSrc(item) === src);
   if(lbIndex<0) lbIndex=0;
   lbShow(lbIndex);
   document.getElementById('lb').classList.add('open');
 }
 function lbShow(i){
-  const src = S.gallery[i];
-  const img = document.getElementById('lb-img');
+  const item = S.gallery[i];
+  const src  = galSrc(item);
+  const desc = galDesc(item);
+  const img  = document.getElementById('lb-img');
   img.style.animation='none'; img.offsetHeight; img.style.animation='';
   img.src = src;
   document.getElementById('lb-counter').textContent = String(i+1).padStart(2,'0')+' / '+String(S.gallery.length).padStart(2,'0');
+  // desc marquee
+  const lbDesc  = document.getElementById('lb-desc');
+  const lbDescI = document.getElementById('lb-desc-inner');
+  if(desc){ lbDescI.textContent=desc; lbDesc.classList.remove('empty'); }
+  else     { lbDescI.textContent='';  lbDesc.classList.add('empty'); }
 }
 function lbNav(dir){ lbIndex=(lbIndex+dir+S.gallery.length)%S.gallery.length; lbShow(lbIndex); }
 function closeLB(){ document.getElementById('lb').classList.remove('open'); }
